@@ -1,0 +1,25 @@
+{
+  "name": "Rapportini Tecnici - Operatore",
+  "short_name": "Rapportini",
+  "description": "App per la compilazione e invio dei rapportini tecnici Liberty Lines",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#2563eb",
+  "background_color": "#f6f7f9",
+  "lang": "it",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

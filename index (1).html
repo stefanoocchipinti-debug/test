@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#2563eb">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Rapportini">
+  <title>Rapportini Operatore</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/icon-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app-header">
+  <h1>🔧 Rapportini Tecnici</h1>
+  <span class="role-badge">Operatore</span>
+</div>
+
+<div class="main">
+  <div class="test-banner">⚠ Ambiente di Test — email: s.occhipinti@libertylines.it</div>
+
+  <div class="card">
+    <div class="card-title">📝 Nuovo Rapportino</div>
+    <form id="rapForm">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Operatore <span class="req">*</span></label>
+          <input type="text" id="operatore" class="input" placeholder="Nome e Cognome" required>
+        </div>
+        <div class="form-group">
+          <label>Data <span class="req">*</span></label>
+          <input type="date" id="data" class="input" required>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Unità <span class="req">*</span></label>
+          <select id="unita" class="input" required></select>
+        </div>
+        <div class="form-group">
+          <label>Impianto <span class="req">*</span></label>
+          <select id="impianto" class="input" required></select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Stato Lavoro <span class="req">*</span></label>
+          <select id="statoLavoro" class="input" required>
+            <option value="">Seleziona stato...</option>
+            <option value="Completato">Completato</option>
+            <option value="In corso">In corso</option>
+            <option value="In attesa ricambi">In attesa ricambi</option>
+            <option value="Sospeso">Sospeso</option>
+            <option value="Da programmare">Da programmare</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Ore Lavorate <span class="req">*</span></label>
+          <input type="number" id="oreLavorate" class="input" placeholder="Es. 4" min="0" step="0.5" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Descrizione Intervento <span class="req">*</span></label>
+        <textarea id="descrizione" class="input" placeholder="Descrivi l'intervento effettuato..." required></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Materiali Utilizzati</label>
+        <textarea id="materialiUsati" class="input" placeholder="Elenco materiali (opzionale)..." style="min-height:60px"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Note</label>
+        <textarea id="note" class="input" placeholder="Note aggiuntive (opzionale)..." style="min-height:60px"></textarea>
+      </div>
+
+      <div class="attach-section">
+        <label>📷 Foto Ricambi Utilizzati</label>
+        <div class="attach-buttons">
+          <label class="btn-attach" tabindex="0">📸 Galleria / Fotocamera<input type="file" accept="image/*" multiple hidden onchange="addFiles('ricambi',this)"></label>
+          <label class="btn-attach" tabindex="0">📎 File<input type="file" multiple hidden onchange="addFiles('ricambi',this)"></label>
+        </div>
+        <div class="attach-grid" id="grid-ricambi"></div>
+        <div class="attach-count" id="count-ricambi"></div>
+      </div>
+
+      <div class="attach-section">
+        <label>📷 Foto Impianti</label>
+        <div class="attach-buttons">
+          <label class="btn-attach" tabindex="0">📸 Galleria / Fotocamera<input type="file" accept="image/*" multiple hidden onchange="addFiles('impianti',this)"></label>
+          <label class="btn-attach" tabindex="0">📎 File<input type="file" multiple hidden onchange="addFiles('impianti',this)"></label>
+        </div>
+        <div class="attach-grid" id="grid-impianti"></div>
+        <div class="attach-count" id="count-impianti"></div>
+      </div>
+
+      <div class="form-group">
+        <label>Responsabile <span class="req">*</span></label>
+        <select id="responsabile" class="input" required>
+          <option value="">Seleziona responsabile...</option>
+          <option value="a.stracuzzi@libertylines.it" data-nome="Stracuzzi Antonino">Stracuzzi Antonino</option>
+          <option value="p.pizzimenti@libertylines.it" data-nome="Pizzimenti Paolo">Pizzimenti Paolo</option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn btn-add">➕ Aggiungi Rapportino alla Coda</button>
+    </form>
+  </div>
+
+  <div class="card" id="queueCard">
+    <div class="card-title">📦 Rapportini da Inviare <span class="queue-count" id="queueCount">0</span></div>
+    <div id="queueList">
+      <div class="queue-empty">Nessun rapportino in coda. Compila il form e clicca "Aggiungi".</div>
+    </div>
+    <div class="buttons-row" id="queueActions" hidden>
+      <button class="btn btn-send" onclick="inviaRapportini()" style="flex:2">📨 Scarica File e Invia Email</button>
+      <button class="btn" onclick="svuotaCoda()" style="flex:1;background:var(--bg);color:var(--danger);border:1px solid var(--danger)">🗑 Svuota</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📋 Storico Rapportini Inviati</div>
+    <div id="storico"></div>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script src="script.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(() => {});
+}
+</script>
+</body>
+</html>
